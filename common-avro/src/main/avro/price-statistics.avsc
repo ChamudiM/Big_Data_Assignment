@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "name": "PriceStatistics",
+  "namespace": "com.assignment.orders.avro",
+  "fields": [
+    { "name": "count", "type": "long", "default": 0 },
+    { "name": "total", "type": "double", "default": 0.0 }
+  ]
+}
+

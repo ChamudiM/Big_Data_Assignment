@@ -1,0 +1,31 @@
+server:
+  port: ${SERVER_PORT:8082}
+
+spring:
+  application:
+    name: order-producer
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      acks: all
+      retries: 10
+      properties:
+        enable.idempotence: true
+        schema.registry.url: ${SCHEMA_REGISTRY_URL:http://localhost:8081}
+        auto.register.schemas: true
+
+app:
+  topics:
+    orders-raw: orders.raw
+  generator:
+    enabled: ${ORDER_GENERATOR_ENABLED:false}
+    interval-ms: ${ORDER_GENERATOR_INTERVAL_MS:1000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+

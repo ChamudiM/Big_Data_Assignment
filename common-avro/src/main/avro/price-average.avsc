@@ -1,0 +1,12 @@
+{
+  "type": "record",
+  "name": "PriceAverage",
+  "namespace": "com.assignment.orders.avro",
+  "fields": [
+    { "name": "product", "type": "string" },
+    { "name": "orderCount", "type": "long" },
+    { "name": "totalPrice", "type": "double" },
+    { "name": "averagePrice", "type": "double" },
+    { "name": "updatedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } }
+  ]
+}

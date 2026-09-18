@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Order Stream Control Room</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="topbar">
+    <div>
+        <p class="eyebrow">Kafka operations</p>
+        <h1>Order Stream Control Room</h1>
+        <p class="subtitle">Live Avro orders, running averages, retry activity and dead-letter recovery.</p>
+    </div>
+    <div class="connection"><span id="status-dot"></span><span id="status-text">Connecting</span></div>
+</header>
+
+<main>
+    <section class="metrics" aria-label="System metrics">
+        <article><span>Processed</span><strong id="processed-count">0</strong></article>
+        <article><span>Products tracked</span><strong id="product-count">0</strong></article>
+        <article><span>Retry events</span><strong id="retry-count">0</strong></article>
+        <article class="danger"><span>In DLQ</span><strong id="dlq-count">0</strong></article>
+    </section>
+
+    <section class="panel command-panel">
+        <div>
+            <p class="eyebrow">Demo controls</p>
+            <h2>Publish an order</h2>
+        </div>
+        <form id="order-form">
+            <label>Product
+                <select id="product" required>
+                    <option>Item1</option><option>Item2</option><option>Item3</option><option>Item4</option>
+                    <option value="TEMP_FAIL">TEMP_FAIL — retry twice</option>
+                    <option value="PERM_FAIL">PERM_FAIL — send to DLQ</option>
+                </select>
+            </label>
+            <label>Price
+                <input id="price" type="number" min="0.01" step="0.01" value="100.00" required>
+            </label>
+            <button type="submit">Publish order</button>
+        </form>
+        <p id="form-message" class="form-message"></p>
+    </section>
+
+    <section class="panel">
+        <div class="section-heading">
+            <div><p class="eyebrow">Stateful stream</p><h2>Running averages</h2></div>
+            <span id="updated-at" class="timestamp"></span>
+        </div>
+        <div id="average-grid" class="average-grid"><p class="empty">Waiting for aggregate records…</p></div>
+    </section>
+
+    <div class="two-column">
+        <section class="panel">
+            <div class="section-heading"><div><p class="eyebrow">Failure handling</p><h2>Retry timeline</h2></div></div>
+            <div class="table-wrap">
+                <table><thead><tr><th>Order</th><th>Attempt</th><th>Reason</th><th>Time</th></tr></thead>
+                    <tbody id="retry-body"><tr><td colspan="4" class="empty">No retries observed</td></tr></tbody></table>
+            </div>
+        </section>
+
+        <section class="panel dlq-panel">
+            <div class="section-heading"><div><p class="eyebrow">Recovery</p><h2>Dead-letter queue</h2></div></div>
+            <div class="table-wrap">
+                <table><thead><tr><th>Order</th><th>Product</th><th>Reason</th><th></th></tr></thead>
+                    <tbody id="dlq-body"><tr><td colspan="4" class="empty">DLQ is empty</td></tr></tbody></table>
+            </div>
+        </section>
+    </div>
+</main>
+
+<template id="average-card-template">
+    <article class="average-card">
+        <div><span class="product"></span><span class="orders"></span></div>
+        <strong class="average"></strong>
+        <span class="total"></span>
+    </article>
+</template>
+
+<script src="/app.js"></script>
+</body>
+</html>
+

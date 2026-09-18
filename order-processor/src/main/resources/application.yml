@@ -1,0 +1,46 @@
+server:
+  port: ${SERVER_PORT:8083}
+
+spring:
+  application:
+    name: order-processor
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    properties:
+      schema.registry.url: ${SCHEMA_REGISTRY_URL:http://localhost:8081}
+      specific.avro.reader: true
+    consumer:
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      properties:
+        specific.avro.reader: true
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      acks: all
+      properties:
+        enable.idempotence: true
+    listener:
+      ack-mode: record
+    streams:
+      application-id: order-price-average-dashboard-v2
+      properties:
+        processing.guarantee: exactly_once_v2
+        auto.offset.reset: earliest
+
+app:
+  consumer:
+    group-id: order-processing-dashboard-v2
+  topics:
+    orders-raw: orders.raw
+    orders-validated: orders.validated
+    orders-dlt: orders.dlt
+    price-averages: price-averages
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
