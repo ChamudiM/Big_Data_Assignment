@@ -1,7 +1,3 @@
-# Order Stream Control Room
-
-An enhanced, self-contained version of the Kafka order-stream assignment. It preserves the original event flow while adding an operations dashboard, live aggregate API, retry visibility, and dead-letter replay. The original project outside this directory is not changed or required.
-
 ## Architecture
 
 `order-producer` publishes Avro orders to `orders.raw`. `order-processor` validates them, publishes valid events to `orders.validated`, uses Kafka Streams to maintain category price averages, and routes permanent or exhausted failures to the dead-letter topic. The processor also serves the dashboard and operations API.
@@ -23,12 +19,6 @@ The automatic generator is enabled by default. For a controlled demo:
 ORDER_GENERATOR_ENABLED=false docker compose up --build -d
 ```
 
-Stop only this version with `docker compose down`. Version 2 uses separate container names, ports, topics hosted by its own Kafka broker, and its own Compose network.
-
-## Demo workflow
-
-Use the dashboard form to publish a normal order, `TEMP_FAIL` order, or `PERM_FAIL` order. Normal orders update the category average. Temporary failures appear in retry history and eventually succeed. Permanent failures appear in the DLQ panel and can be replayed. Replay republishes the original event; a deliberately permanent demo event will return to the DLQ until its failure condition is changed.
-
 ## Operations API
 
 - `GET /api/operations/summary` — counters, current averages, retry history, and DLQ entries
@@ -42,5 +32,3 @@ Use the dashboard form to publish a normal order, `TEMP_FAIL` order, or `PERM_FA
 ```bash
 ./mvnw clean verify
 ```
-
-Tests cover producer HTTP behavior, validation, operational state, and the Kafka Streams price-average topology.
